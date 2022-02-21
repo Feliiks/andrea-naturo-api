@@ -4,7 +4,7 @@ const path = require('path');
 const https = require('https')
 const fs = require("fs")
 const cors = require('cors');
-const stripe = require('stripe')('sk_test_51KQwI8CPsIWMaO3U5aAZEycljZaYMDHlGMncpOVjgX0YswyrIuGoqR1q0p8SLpKGNsOyTmY8DpH9FoRr8lIL8Ott00M9bswsgn')
+const stripe = require('stripe')('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')
 const nodemailer = require('nodemailer')
 const hbs = require('nodemailer-express-handlebars')
 
