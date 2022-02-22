@@ -20,13 +20,11 @@ app.listen(PORT, () => {
 
 app.use(
   cors({
-    origin: "https://andrea-naturopathie.com",
-    credentials: true
+    origin: "https://andrea-naturopathie.com"
   })
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "../build")));
 
 
 // NODEMAILER _______________________________________________________
@@ -45,10 +43,10 @@ const transporter = nodemailer.createTransport({
 
 const handlebarOptions = {
   viewEngine: {
-    partialsDir: path.resolve('../public/handlebars'),
+    partialsDir: path.join(__dirname, '../storage/handlebars'),
     defaultLayout: false,
   },
-  viewPath: path.resolve('../public/handlebars'),
+  viewPath: path.join(__dirname, '../storage/handlebars'),
 };
 
 transporter.use('compile', hbs(handlebarOptions))
@@ -57,7 +55,7 @@ transporter.use('compile', hbs(handlebarOptions))
 // ROUTES ___________________________________________________________
 
 app.post('/create-payment-intent', async (req, res) => {
-  const { amount, currency } = req.body;
+  const { amount, currency, cardId } = req.body;
 
   try {
     if (amount < 100) throw new Error()
@@ -65,7 +63,8 @@ app.post('/create-payment-intent', async (req, res) => {
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount,
       currency: currency,
-      payment_method_types: ['card']
+      payment_method_types: ['card'],
+      payment_method: cardId
     })
 
     res.send({
@@ -91,7 +90,7 @@ app.post('/send-products-by-email', async (req, res) => {
     Object.keys(products).map(product => {
       message.attachments.push({
         filename: products[product].name,
-        path: path.join(__dirname, '../public', products[product].file),
+        path: path.join(__dirname, '../storage', products[product].file),
         contentType: 'application/pdf'
       })
     })
