@@ -30,7 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // NODEMAILER _______________________________________________________
 
-const sendEmailProducts = async (toEmail, products) => {
+const sendEmailProducts = async (toEmail, cart) => {
   try {
     const accessToken = await oAuth2Client.getAccessToken();
 
@@ -62,15 +62,19 @@ const sendEmailProducts = async (toEmail, products) => {
     let mailOptions = {
       from: "Andrea SOBRERO <andrea.naturopathie@gmail.com>",
       to: toEmail,
-      subject: "Tes achats sur andrea-naturopathe.com",
+      subject: "Tes achats sur andrea-naturopathie.com",
       template: 'purchase',
+      context: {
+        date: new Date(Date.now()).toLocaleDateString("fr-FR"),
+        cart: cart
+      },
       attachments: []
     }
 
-    Object.keys(products).map(product => {
+    Object.keys(cart.items).map(product => {
       mailOptions.attachments.push({
-        filename: products[product].name,
-        path: path.join(__dirname, '../storage', products[product].file),
+        filename: cart.items[product].name,
+        path: path.join(__dirname, '../storage', cart.items[product].file),
         contentType: 'application/pdf'
       })
     })
@@ -106,10 +110,10 @@ app.post('/create-payment-intent', async (req, res) => {
 })
 
 app.post('/send-products-by-email', async (req, res) => {
-  const { email, products } = req.body;
+  const { email, cart } = req.body;
 
   try {
-    await sendEmailProducts(email, products)
+    await sendEmailProducts(email, cart)
 
     res.sendStatus(200)
   } catch (err) {
