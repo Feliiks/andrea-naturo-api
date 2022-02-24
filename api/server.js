@@ -21,7 +21,7 @@ app.listen(process.env.PORT, () => {
 
 app.use(
   cors({
-    origin: "https://andrea-naturopathie.com"
+    origin: "*"
   })
 );
 app.use(express.json());
@@ -38,7 +38,7 @@ const sendEmailProducts = async (toEmail, cart) => {
       service: "gmail",
       auth: {
         type: "OAuth2",
-        user: "sobrero.ludovic@gmail.com",
+        user: "andrea.naturopathie@gmail.com",
         clientId: process.env.MAIL_CLIENT_ID,
         clientSecret: process.env.MAIL_CLIENT_SECRET,
         refreshToken: process.env.MAIL_REFRESH_TOKEN,
